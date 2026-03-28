@@ -1,0 +1,5 @@
+lora_train/dataset_cat/Original/*
+lora_train/output_PTM/Random_img/*
+__pycache__/
+.ipynb_checkpoints/
+.env
