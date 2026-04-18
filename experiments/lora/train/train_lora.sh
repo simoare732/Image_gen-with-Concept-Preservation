@@ -1,0 +1,21 @@
+accelerate launch train_lora_script.py \
+  --pretrained_model_name_or_path="$HOME/prog/models/pretrained/sdxl-base" \
+  --variant="fp16" \
+  --instance_data_dir="dataset/instance_images" \
+  --class_data_dir="dataset/class_images" \
+  --output_dir="output/lora-TOK-cat-v1" \
+  --mixed_precision="fp16" \
+  --instance_prompt="a photo of TOK cat" \
+  --class_prompt="a photo of a cat" \
+  --resolution=1024 \
+  --train_batch_size=1 \
+  --gradient_accumulation_steps=4 \
+  --learning_rate=1e-4 \
+  --use_8bit_adam \
+  --gradient_checkpointing \
+  --max_train_steps=500 \
+  --validation_prompt="A photo of TOK cat on the moon" \
+  --validation_epochs=25 \
+  --rank=8 \
+  --with_prior_preservation --prior_loss_weight=1.0 \
+  --checkpointing_steps=250
