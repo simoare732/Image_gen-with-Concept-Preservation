@@ -1,4 +1,5 @@
 sdxl-base/
 lora_cat_v1/
+oldImages/
 *.png
 .venv/

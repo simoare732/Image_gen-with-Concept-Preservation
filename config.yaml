@@ -1,12 +1,12 @@
 paths:
-  base_dir: "/homes/saresta/prog"
-  instance_images_dir: "/homes/saresta/prog/data/instance_images"
-  class_images_dir: "/homes/saresta/prog/data/class_images"
-  random_images_dir: "/homes/saresta/prog/data/random_images"
-  base_model_dir: "/homes/saresta/prog/models/pretrained/sdxl-base"
-  lora_model_dir: "/homes/saresta/prog/models/trained/lora_cat_v1"
-  lora_output_test_dir: "/homes/saresta/prog/experiments/lora/test/test_images"
-  evaluation_dir: "/homes/saresta/prog/evaluation"
+  base_dir: "/work/cvcs2026/stochastic_parrots"
+  instance_images_dir: "/work/cvcs2026/stochastic_parrots/data/instance_images"
+  class_images_dir: "/work/cvcs2026/stochastic_parrots/data/class_images"
+  random_images_dir: "/work/cvcs2026/stochastic_parrots/data/random_images"
+  base_model_dir: "/work/cvcs2026/stochastic_parrots/models/pretrained/sdxl-base"
+  lora_model_dir: "/work/cvcs2026/stochastic_parrots/models/trained/lora_cat_v1"
+  lora_output_test_dir: "/work/cvcs2026/stochastic_parrots/experiments/lora/test/test_images"
+  evaluation_dir: "/work/cvcs2026/stochastic_parrots/evaluation"
 
 weights_file:
   lora_weights: "pytorch_lora_weights.safetensors"
