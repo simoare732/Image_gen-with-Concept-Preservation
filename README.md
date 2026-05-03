@@ -9,20 +9,24 @@
 ├── evaluation/
 │   ├── metrics/
 │   │   ├── evaluation_metric.ipynb
-│   │   ├── generation_metric.ipynb
-│   │   ├── fidelity/
+│   │   ├── gen_parallel.py
+│   │   ├── clipi/
 │   │   │   ├── images_lora/
 │   │   │   ├── images_sdxl/
-│   │   ├── preservability/
-│   │   │   ├── clipt/
-│   │   │   │   ├── images_lora/
-│   │   │   │   ├── images_sdxl/
-│   │   │   ├── fid/
-│   │   │   │   ├── images_lora/
-│   │   │   │   ├── images_sdxl/
-│   │   │   ├── lpips/
-│   │   │   │   ├── images_lora/
-│   │   │   │   ├── images_sdxl/
+│   │   ├── clipt/
+│   │   │   ├── images_lora/
+│   │   │   ├── images_sdxl/
+│   │   ├── fid/
+│   │   │   ├── images_lora/
+│   │   │   ├── images_sdxl/
+│   │   ├── lpips/
+│   │   │   ├── images_lora/
+│   │   │   ├── images_sdxl/
+│   ├── prompts/
+│   │   ├── clipi/
+│   │   ├── clipt/
+│   │   ├── fid/
+│   │   ├── lpips/
 ├── experiments/
 │   ├── gen_random_imgs.ipynb
 │   ├── lora/

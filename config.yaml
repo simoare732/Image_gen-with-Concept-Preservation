@@ -7,6 +7,7 @@ paths:
   lora_model_dir: "/work/cvcs2026/stochastic_parrots/models/trained/lora_cat_v1"
   lora_output_test_dir: "/work/cvcs2026/stochastic_parrots/experiments/lora/test/test_images"
   evaluation_dir: "/work/cvcs2026/stochastic_parrots/evaluation"
+  prompts_dir: "/work/cvcs2026/stochastic_parrots/evaluation/prompts"
 
 weights_file:
   lora_weights: "pytorch_lora_weights.safetensors"

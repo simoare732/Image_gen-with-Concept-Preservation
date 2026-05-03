@@ -3,7 +3,7 @@ import subprocess
 import os
 
 # 1. Load configuration
-with open(os.path.expanduser("/work/cvcs2026/stochastic_parrots/config.yaml")", "r") as f:
+with open(os.path.expanduser("/work/cvcs2026/stochastic_parrots/config.yaml"), "r") as f:
     cfg = yaml.safe_load(f)
 
 
