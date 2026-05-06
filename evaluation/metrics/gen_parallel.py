@@ -5,7 +5,7 @@ An example would be
 sbatch run_generation.sh sdxl fid
 
 The parameters can be:
-- model: sdxl, lora
+- model: sdxl, lorav1, lorav2
 - metric: fid, clipt, clipi, lpips
 '''
 
@@ -24,26 +24,35 @@ with open(os.path.expanduser("/work/cvcs2026/stochastic_parrots/config.yaml"), "
 
 # Config arguments
 parser = argparse.ArgumentParser(description="Generation of images for evaluation metrics.")
-parser.add_argument("--model", type=str, choices=["sdxl", "lora"], required=True, help="Which model to use")
+parser.add_argument("--model", type=str, choices=["sdxl", "lorav1", "lorav2"], required=True, help="Which model to use")
 parser.add_argument("--metric", type=str, choices=["fid", "clipt", "clipi", "lpips"], required=True, help="For which metric to generate images")
 args = parser.parse_args()
 
+LORA_VERSION = 1
+if args.model == "lorav2":
+    LORA_VERSION = 2
+
+if "lora" in args.model:
+    model_type = "lora"
+else:
+    model_type = "sdxl"
+
 # Definition PATHS
 MODEL_PATH = config["paths"]["base_model_dir"]
-LORA_PATH = config["paths"]["lora_model_dir"]
+LORA_PATH = config["paths"]["lorav" + str(LORA_VERSION) + "_model_dir"]
 LORA_WEIGHTS_FILE = config["weights_file"]["lora_weights"]
 
 OUTPUT_CLIPI_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/clipi"
-OUTPUT_CLIPI_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v1/clipi"
+OUTPUT_CLIPI_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/clipi"
 
 OUTPUT_CLIPT_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/clipt"
-OUTPUT_CLIPT_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v1/clipt"
+OUTPUT_CLIPT_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/clipt"
 
 OUTPUT_FID_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/fid"
-OUTPUT_FID_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v1/fid"
+OUTPUT_FID_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/fid"
 
 OUTPUT_LPIPS_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/lpips"
-OUTPUT_LPIPS_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v1/lpips"
+OUTPUT_LPIPS_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/lpips"
 
 PROMPTS_DIR = config["paths"]["prompts_dir"]
 
@@ -74,7 +83,7 @@ path_mapping = {
 
 # Helper functions
 pipe = None
-OUTPUT_DIR = path_mapping[args.metric][args.model]
+OUTPUT_DIR = path_mapping[args.metric][model_type]
 SEEDS_PER_IMAGES = number_images[args.metric]
 
 # Function to clean GPU cache and collect garbage, useful to prevent memory leaks during model loading/unloading
@@ -143,7 +152,7 @@ def load_prompts(metric, model):
     return prompts
 
 
-prompts = load_prompts(args.metric, args.model)
+prompts = load_prompts(args.metric, model_type)
 
 
 # Create a list of all the tasks to be executed, each task is a tuple of (prompt_text, seed, output_filepath)
@@ -181,9 +190,9 @@ print(f"This job will generate {len(my_tasks)} images (Seed from {start_seed} to
 
 # Load the model once per job
 if len(my_tasks) > 0:
-    if args.model == "sdxl":
+    if model_type == "sdxl":
         pipe = sdxlModel()
-    elif args.model == "lora":
+    elif model_type == "lora":
         pipe = loraModel()
 
 

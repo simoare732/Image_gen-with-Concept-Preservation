@@ -1,5 +1,6 @@
 sdxl-base/
 logs/
 lora_cat_v1/
+lora_cat_v2/
 *.png
 .venv/

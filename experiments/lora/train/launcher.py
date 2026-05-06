@@ -14,7 +14,7 @@ cmd = [
     f"--pretrained_model_name_or_path={cfg['paths']['base_model_dir']}",
     f"--instance_data_dir={cfg['paths']['instance_images_dir']}",
     f"--class_data_dir={cfg['paths']['class_images_dir']}",
-    f"--output_dir={cfg['paths']['lora_model_dir']}",
+    f"--output_dir={cfg['paths']['lorav2_model_dir']}",
     f"--learning_rate={cfg['hyperparameters']['learning_rate']}",
     f"--max_train_steps={cfg['hyperparameters']['max_train_steps']}",
     "--instance_prompt=a photo of TOK cat",
@@ -28,8 +28,8 @@ cmd = [
     "--gradient_accumulation_steps=4",
     "--gradient_checkpointing",
     "--with_prior_preservation",
-    "--prior_loss_weight=1.0"
-    "--rank=8",
+    "--prior_loss_weight=2.0",
+    "--rank=4",
     f"--checkpointing_steps={cfg['hyperparameters']['checkpointing_steps']}"
 ]
 
