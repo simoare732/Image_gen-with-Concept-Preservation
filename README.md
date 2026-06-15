@@ -107,6 +107,66 @@ A comparative study of personalized image generation using **Textual Inversion (
 
 ---
 
+## How to Run
+
+> All commands are meant to be run on the cluster after SSH login.
+> Training and generation require a GPU node via SLURM.
+
+### 1. Setup
+
+```bash
+# Create virtual environment and install dependencies
+python3 -m venv /homes/<username>/cvcs2026/venv
+source /homes/<username>/cvcs2026/venv/bin/activate
+pip install torch torchvision --index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements.txt
+
+# Download the dataset
+python data/download_dataset.py
+```
+
+### 2. Training
+
+| Method | Config file | Command |
+|--------|-------------|---------|
+| DreamBooth + LoRA | `config.yaml` | `sbatch experiments/lora/train/train_lora.sh` |
+| Textual Inversion | `config_ti_personal.yaml` → upload to `/homes/<username>/cvcs2026/config_ti.yaml` | `sbatch experiments/ti/train/train_ti.sh` |
+
+### 3. Visual Test (optional)
+
+Launch a JupyterLab session on a GPU node and open the relevant notebook:
+
+| Method | Notebook |
+|--------|----------|
+| LoRA | `experiments/lora/test/test_lora.ipynb` |
+| TI | `experiments/ti/test/test_ti.ipynb` |
+
+### 4. Generate Evaluation Images
+
+```bash
+# LoRA
+cd evaluation/metrics
+bash all_generation.sh          # submits 4 SLURM array jobs (50 tasks each)
+
+# Textual Inversion
+bash all_generation_ti.sh       # submits 4 SLURM array jobs (50 tasks each)
+```
+
+Monitor progress: `squeue -u $USER`
+
+### 5. Compute Metrics
+
+Open the evaluation notebooks in JupyterLab and run all cells:
+
+| Method | Notebook | Reads from |
+|--------|----------|------------|
+| LoRA | `evaluation/metrics/evaluation_metric.ipynb` | `evaluation/metrics/lora-v*/` and `sdxl/` |
+| TI | `evaluation/metrics/evaluation_metric_ti.ipynb` | `evaluation/metrics/ti-v1/` and `sdxl/` |
+
+Results are printed at the end of each notebook as a summary table.
+
+---
+
 ## Evaluation Metrics
 
 | Metric | Measures | Better |
