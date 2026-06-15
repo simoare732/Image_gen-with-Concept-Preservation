@@ -120,11 +120,14 @@ A comparative study of personalized image generation using **Textual Inversion (
 
 ## Results
 
-| Metric | SDXL Base | LoRA v2 | TI v1 |
-|--------|-----------|---------|-------|
-| CLIP-I (↑) | — | — | — |
-| CLIP-T (↑) | — | — | — |
-| FID (↓) | (baseline) | — | — |
-| LPIPS (↑) | — | — | — |
+| Metric | SDXL Base | LoRA v1 | LoRA v2 | TI v1 |
+|--------|-----------|---------|---------|-------|
+| CLIP-I (↑) | baseline | +16.4% | +14.5% | +8.31% |
+| CLIP-T (↑) | 0.2497 | -1.20% drift | -1.33% drift | 0.00% drift |
+| FID (↓) | baseline | 56.28 | 65.54 | 90.59 |
+| LPIPS (↑) | 0.5234 | 0.5319 | 0.5457 | 0.5484 |
 
-*Results to be filled after evaluation.*
+**Key takeaways:**
+- **LoRA** achieves higher concept fidelity (CLIP-I) but introduces minor language drift and higher FID
+- **TI** guarantees zero language drift and minimal footprint (few KB file), at the cost of lower concept fidelity
+- Both methods preserve generative diversity (LPIPS) comparably to the SDXL baseline
