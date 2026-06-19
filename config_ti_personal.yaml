@@ -1,0 +1,33 @@
+# config_ti_personal.yaml — Configurazione personale Kevin (ktotaro) per test TI indipendente
+#
+# Da caricare sul cluster in:  /homes/ktotaro/cvcs2026/config_ti.yaml
+#
+# NON caricare in /work/cvcs2026/stochastic_parrots/ — lì c'è il config condiviso
+#
+# Tutti gli output di questo file vanno in /work/.../ktotaro/ 
+
+paths:
+  # ── Risorse condivise ──────────────────────
+  base_dir:             "/work/cvcs2026/stochastic_parrots"
+  instance_images_dir:  "/work/cvcs2026/stochastic_parrots/data/instance_images"
+  random_images_dir:    "/work/cvcs2026/stochastic_parrots/data/random_images"
+  base_model_dir:       "/work/cvcs2026/stochastic_parrots/models/pretrained/sdxl-base"
+  prompts_dir:          "/work/cvcs2026/stochastic_parrots/ktotaro/evaluation/prompts"
+
+  # ── Output personali ──────────────────────
+  tiv1_model_dir:       "/work/cvcs2026/stochastic_parrots/ktotaro/models/trained/ti_cat_v1"
+  ti_output_test_dir:   "/work/cvcs2026/stochastic_parrots/ktotaro/experiments/ti/test/test_images"
+  evaluation_dir:       "/work/cvcs2026/stochastic_parrots/ktotaro/evaluation"
+
+weights_file:
+  ti_weights: "learned_embeds_final.safetensors"
+
+hyperparameters:
+  variant:             "fp16"
+  mixed_precision:     "fp16"
+  resolution:          1024
+  learning_rate:       5.0e-4
+  max_train_steps:     5000
+  checkpointing_steps: 500
+  placeholder_token:   "<cat2>"
+  initializer_token:   "cat"
