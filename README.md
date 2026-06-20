@@ -173,7 +173,7 @@ Results are printed at the end of each notebook as a summary table.
 |--------|-----------|---------|---------|-------|
 | CLIP-I (↑) | baseline | +16.4% | +14.5% | +8.31% |
 | CLIP-T (↑) | 0.2497 | -1.20% drift | -1.33% drift | 0.00% drift |
-| FID (↓) | baseline | 56.28 | 65.54 | 90.59 |
+| FID (↓) | baseline | 56.28 | 65.54 | 1.74 |
 | LPIPS (↑) | 0.5234 | 0.5319 | 0.5457 | 0.5484 |
 
 **Key takeaways:**
