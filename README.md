@@ -18,14 +18,12 @@ A comparative study of personalized image generation using **Textual Inversion (
 ```text
 ├── README.md
 ├── config.yaml                          # LoRA training config (shared)
-├── config_ti_personal.yaml              # TI training config (personal for TI)
 ├── requirements.txt
 │
 ├── data/
 │   ├── download_dataset.py              # Downloads instance images from HuggingFace
 │   ├── instance_images/                 # Reference photos of the target concept
-│   ├── class_images/                    # Prior preservation images (LoRA)
-│   └── random_images/
+│   └── class_images/                    # Prior preservation images (LoRA)
 │
 ├── experiments/
 │   ├── gen_random_imgs.ipynb
@@ -52,14 +50,10 @@ A comparative study of personalized image generation using **Textual Inversion (
 │
 ├── evaluation/
 │   ├── run_generation.sh                # SLURM array job for LoRA image generation
-│   ├── all_generation.sh                # Submits all LoRA generation jobs
+│   ├── all_generation.sh                # Submits all generation jobs
 │   ├── metrics/
-│   │   ├── gen_parallel.py              # LoRA: generates images for each metric
-│   │   ├── gen_parallel_ti.py           # TI: generates images for each metric
-│   │   ├── run_generation_ti.sh         # SLURM array job for TI image generation
-│   │   ├── all_generation_ti.sh         # Submits all TI generation jobs
-│   │   ├── evaluation_metric.ipynb      # Computes metrics for LoRA vs SDXL baseline
-│   │   ├── evaluation_metric_ti.ipynb   # Computes metrics for TI vs SDXL baseline
+│   │   ├── gen_parallel.py              # Generates images for each metric given a model
+│   │   ├── evaluation_metric.ipynb      # Computes metrics for Lora|Textual Inversion vs SDXL baseline
 │   │   ├── sdxl/
 │   │   │   ├── clipi/
 │   │   │   ├── clipt/
@@ -87,10 +81,8 @@ A comparative study of personalized image generation using **Textual Inversion (
 │       │   └── ti/prompt.txt            # Prompts with <cat2>
 │       ├── clipt/
 │       │   ├── prompt.txt               # 25 generic prompts (language drift test)
-│       │   └── ti/prompt.txt
 │       ├── fid/
 │       │   ├── prompt.txt               # "A photo of a cat"
-│       │   └── ti/prompt.txt            # "A photo of <cat2>"
 │       └── lpips/
 │           ├── sdxl/prompt.txt
 │           ├── lora/prompt.txt
@@ -143,25 +135,22 @@ Launch a JupyterLab session on a GPU node and open the relevant notebook:
 
 ### 4. Generate Evaluation Images
 
+Warning: *all_generation.sh* will generate the images for all the models and all the metrics. 
+
+Then 
+
 ```bash
-# LoRA
 cd evaluation/metrics
 bash all_generation.sh          # submits 4 SLURM array jobs (50 tasks each)
-
-# Textual Inversion
-bash all_generation_ti.sh       # submits 4 SLURM array jobs (50 tasks each)
 ```
 
 Monitor progress: `squeue -u $USER`
 
 ### 5. Compute Metrics
 
-Open the evaluation notebooks in JupyterLab and run all cells:
+Open *evaluation_metric.ipynb* notebook in JupyterLab and run all cells.
 
-| Method | Notebook | Reads from |
-|--------|----------|------------|
-| LoRA | `evaluation/metrics/evaluation_metric.ipynb` | `evaluation/metrics/lora-v*/` and `sdxl/` |
-| TI | `evaluation/metrics/evaluation_metric_ti.ipynb` | `evaluation/metrics/ti-v1/` and `sdxl/` |
+By Default the version of LoRA used is the lora-v1. If you want to change go to the second cell (the one below "Definition Output Directories") and modify the row 2 with the version wanted.
 
 Results are printed at the end of each notebook as a summary table.
 
@@ -184,7 +173,7 @@ Results are printed at the end of each notebook as a summary table.
 |--------|-----------|---------|---------|-------|
 | CLIP-I (↑) | baseline | +16.4% | +14.5% | +8.31% |
 | CLIP-T (↑) | 0.2497 | -1.20% drift | -1.33% drift | 0.00% drift |
-| FID (↓) | baseline | 56.28 | 65.54 | 90.59 |
+| FID (↓) | baseline | 56.28 | 65.54 | 1.74 |
 | LPIPS (↑) | 0.5234 | 0.5319 | 0.5457 | 0.5484 |
 
 **Key takeaways:**

@@ -18,13 +18,14 @@ import gc
 import yaml
 import math
 import argparse
+from safetensors.torch import load_file
 
 with open(os.path.expanduser("/work/cvcs2026/stochastic_parrots/config.yaml"), "r") as f:
     config = yaml.safe_load(f)
 
 # Config arguments
 parser = argparse.ArgumentParser(description="Generation of images for evaluation metrics.")
-parser.add_argument("--model", type=str, choices=["sdxl", "lorav1", "lorav2"], required=True, help="Which model to use")
+parser.add_argument("--model", type=str, choices=["sdxl", "lorav1", "lorav2", "tiv1"], required=True, help="Which model to use")
 parser.add_argument("--metric", type=str, choices=["fid", "clipt", "clipi", "lpips"], required=True, help="For which metric to generate images")
 args = parser.parse_args()
 
@@ -34,25 +35,39 @@ if args.model == "lorav2":
 
 if "lora" in args.model:
     model_type = "lora"
+elif args.model == "tiv1":
+    model_type = "ti"
 else:
     model_type = "sdxl"
 
+
 # Definition PATHS
+TI_EMBEDDING_PATH = os.path.join(
+    config["paths"]["tiv1_model_dir"],
+    config["weights_file"]["ti_weights"]
+)
+
+PLACEHOLDER_TOKEN = config["hyperparameters_ti"]["placeholder_token"]
+
 MODEL_PATH = config["paths"]["base_model_dir"]
 LORA_PATH = config["paths"]["lorav" + str(LORA_VERSION) + "_model_dir"]
 LORA_WEIGHTS_FILE = config["weights_file"]["lora_weights"]
 
 OUTPUT_CLIPI_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/clipi"
 OUTPUT_CLIPI_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/clipi"
+OUTPUT_CLIPI_TI = config["paths"]["evaluation_dir"] + "/metrics/ti-v1/clipi"
 
 OUTPUT_CLIPT_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/clipt"
 OUTPUT_CLIPT_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/clipt"
+OUTPUT_CLIPT_TI = config["paths"]["evaluation_dir"] + "/metrics/ti-v1/clipt"
 
 OUTPUT_FID_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/fid"
 OUTPUT_FID_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/fid"
+OUTPUT_FID_TI = config["paths"]["evaluation_dir"] + "/metrics/ti-v1/fid"
 
 OUTPUT_LPIPS_SDXL = config["paths"]["evaluation_dir"] + "/metrics/sdxl/lpips"
 OUTPUT_LPIPS_LORA = config["paths"]["evaluation_dir"] + "/metrics/lora-v" + str(LORA_VERSION) + "/lpips"
+OUTPUT_LPIPS_TI = config["paths"]["evaluation_dir"] + "/metrics/ti-v1/lpips"
 
 PROMPTS_DIR = config["paths"]["prompts_dir"]
 
@@ -70,13 +85,17 @@ number_images = {  # Number of images per prompt
 
 path_mapping = {
     "fid": {"sdxl": OUTPUT_FID_SDXL, 
-            "lora": OUTPUT_FID_LORA},
+            "lora": OUTPUT_FID_LORA,
+            "ti": OUTPUT_FID_TI},
     "clipt": {"sdxl": OUTPUT_CLIPT_SDXL, 
-              "lora": OUTPUT_CLIPT_LORA},
+              "lora": OUTPUT_CLIPT_LORA,
+              "ti": OUTPUT_CLIPT_TI},
     "clipi": {"sdxl": OUTPUT_CLIPI_SDXL, 
-              "lora": OUTPUT_CLIPI_LORA},
+              "lora": OUTPUT_CLIPI_LORA,
+              "ti": OUTPUT_CLIPI_TI},
     "lpips": {"sdxl": OUTPUT_LPIPS_SDXL, 
-              "lora": OUTPUT_LPIPS_LORA}
+              "lora": OUTPUT_LPIPS_LORA,
+              "ti": OUTPUT_LPIPS_TI}
 }
 
 
@@ -132,6 +151,31 @@ def loraModel():
 
     return pipe
 
+# Function to get Textual Inversion model, it adds the placeholder token to the tokenizer and loads the learned embeddings into the text encoder
+def ti_model():
+    p = getPipe()
+    cleanCache()
+
+    p.tokenizer.add_tokens([PLACEHOLDER_TOKEN])
+    p.tokenizer_2.add_tokens([PLACEHOLDER_TOKEN])
+    p.text_encoder.resize_token_embeddings(len(p.tokenizer))
+    p.text_encoder_2.resize_token_embeddings(len(p.tokenizer_2))
+
+    token_id_one = p.tokenizer.convert_tokens_to_ids(PLACEHOLDER_TOKEN)
+    token_id_two = p.tokenizer_2.convert_tokens_to_ids(PLACEHOLDER_TOKEN)
+
+    tensors = load_file(TI_EMBEDDING_PATH)
+    with torch.no_grad():
+        p.text_encoder.get_input_embeddings().weight[token_id_one] = (
+            tensors["clip_l"].to(dtype=p.text_encoder.dtype, device="cuda")
+        )
+        p.text_encoder_2.get_input_embeddings().weight[token_id_two] = (
+            tensors["clip_g"].to(dtype=p.text_encoder_2.dtype, device="cuda")
+        )
+
+    return p
+
+
 
 # Function to load the correct prompts according to the metric and model.
 def load_prompts(metric, model):
@@ -180,10 +224,8 @@ chunk_size = math.ceil(TOTAL_IMAGES / total_tasks)
 start_seed = (task_id * chunk_size)
 end_seed = min(start_seed + chunk_size, TOTAL_IMAGES)
 
-
 # Get the subset of tasks for this job
 my_tasks = all_tasks[start_seed:end_seed]
-
 
 print(f"Start Job ID: {task_id}/{total_tasks-1}")
 print(f"This job will generate {len(my_tasks)} images (Seed from {start_seed} to {end_seed-1})")
@@ -194,7 +236,8 @@ if len(my_tasks) > 0:
         pipe = sdxlModel()
     elif model_type == "lora":
         pipe = loraModel()
-
+    elif model_type == "ti":
+        pipe = ti_model()
 
 # Generation
 for prompt_text, seed, filepath in my_tasks:

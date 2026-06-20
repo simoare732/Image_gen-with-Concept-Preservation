@@ -15,14 +15,14 @@ cmd = [
     f"--instance_data_dir={cfg['paths']['instance_images_dir']}",
     f"--class_data_dir={cfg['paths']['class_images_dir']}",
     f"--output_dir={cfg['paths']['lorav2_model_dir']}",
-    f"--learning_rate={cfg['hyperparameters']['learning_rate']}",
-    f"--max_train_steps={cfg['hyperparameters']['max_train_steps']}",
+    f"--learning_rate={cfg['hyperparameters_lora']['learning_rate']}",
+    f"--max_train_steps={cfg['hyperparameters_lora']['max_train_steps']}",
     "--instance_prompt=a photo of TOK cat",
     "--class_prompt=a photo of a cat",
     "--validation_prompt=A photo of TOK cat on the moon",
-    f"--variant={cfg['hyperparameters']['variant']}",
-    f"--mixed_precision={cfg['hyperparameters']['mixed_precision']}",
-    f"--resolution={cfg['hyperparameters']['resolution']}",
+    f"--variant={cfg['hyperparameters_lora']['variant']}",
+    f"--mixed_precision={cfg['hyperparameters_lora']['mixed_precision']}",
+    f"--resolution={cfg['hyperparameters_lora']['resolution']}",
     "--train_batch_size=1",
     "--use_8bit_adam",
     "--gradient_accumulation_steps=4",
@@ -30,7 +30,7 @@ cmd = [
     "--with_prior_preservation",
     "--prior_loss_weight=2.0",
     "--rank=4",
-    f"--checkpointing_steps={cfg['hyperparameters']['checkpointing_steps']}"
+    f"--checkpointing_steps={cfg['hyperparameters_lora']['checkpointing_steps']}"
 ]
 
 # 3. Esegui il comando
