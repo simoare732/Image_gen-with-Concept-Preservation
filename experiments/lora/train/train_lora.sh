@@ -8,7 +8,7 @@
 #SBATCH --output=training_output.log
 
 # Attiva l'ambiente
-source /homes/saresta/cvcs2026/venv/bin/activate
+source /homes/$USER/cvcs2026/venv/bin/activate
 
 accelerate launch train_dreambooth_lora_sdxl.py \
   --pretrained_model_name_or_path="/work/cvcs2026/stochastic_parrots/models/pretrained/sdxl-base" \

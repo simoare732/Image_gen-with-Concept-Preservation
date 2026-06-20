@@ -21,7 +21,7 @@ METRIC=$2
 mkdir -p logs
 
 # Activate the virtual environment
-source /homes/saresta/cvcs2026/venv/bin/activate
+source /homes/$USER/cvcs2026/venv/bin/activate
 
 # Run the generation script
 python metrics/gen_parallel.py --model "$MODEL" --metric "$METRIC"

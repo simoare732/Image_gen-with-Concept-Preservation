@@ -31,7 +31,7 @@ DEFAULT_PROMPTS = [
     "A photo of a beautiful cat",
 ]
 
-CONFIG_PATH = "/homes/ktotaro/cvcs2026/config_ti.yaml"
+CONFIG_PATH = "/work/cvcs2026/stochastic_parrots/config.yaml"
 
 
 def load_config():
@@ -95,7 +95,7 @@ def main():
         cfg["weights_file"]["ti_weights"]
     )
     output_dir = cfg["paths"]["ti_output_test_dir"]
-    placeholder_token = cfg["hyperparameters"]["placeholder_token"]
+    placeholder_token = cfg["hyperparameters_ti"]["placeholder_token"]
 
     device = "cuda" if torch.cuda.is_available() else "cpu"
     dtype = torch.float16 if device == "cuda" else torch.float32

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # List of models and metrics to evaluate
-MODELS=("sdxl lorav1 lorav2 tiv1")   # sdxl lorav1 lorav2 tiv1
+MODELS=("sdxl" "lorav1" "lorav2" "tiv1")
 METRICS=("fid" "clipt" "clipi" "lpips")
 
 # Loop through each model and metric combination

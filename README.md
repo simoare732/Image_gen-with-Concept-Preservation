@@ -122,7 +122,7 @@ python data/download_dataset.py
 | Method | Config file | Command |
 |--------|-------------|---------|
 | DreamBooth + LoRA | `config.yaml` | `sbatch experiments/lora/train/train_lora.sh` |
-| Textual Inversion | `config_ti_personal.yaml` → upload to `/homes/<username>/cvcs2026/config_ti.yaml` | `sbatch experiments/ti/train/train_ti.sh` |
+| Textual Inversion | `config.yaml` | `sbatch experiments/ti/train/train_ti.sh` |
 
 ### 3. Visual Test (optional)
 

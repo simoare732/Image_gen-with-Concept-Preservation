@@ -10,13 +10,13 @@ import os
 import subprocess
 import yaml
 
-CONFIG_PATH = "/homes/ktotaro/cvcs2026/config_ti.yaml"
+CONFIG_PATH = "/work/cvcs2026/stochastic_parrots/config.yaml"
 
 with open(CONFIG_PATH, "r") as f:
     cfg = yaml.safe_load(f)
 
 p = cfg["paths"]
-hp = cfg["hyperparameters"]
+hp = cfg["hyperparameters_ti"]
 wf = cfg["weights_file"]
 
 script_path = os.path.join(os.path.dirname(__file__), "train_ti.py")
